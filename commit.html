@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Revert & Reset · complete guide to undoing changes</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f4f7fb;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #0b1e33;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 20, 50, 0.3);
+      overflow: hidden;
+      padding: 3rem 2.8rem;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(145deg, #0b2b44, #1f5f9e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3rem;
+      border-bottom: 3px solid #dde3ed;
+      padding-bottom: 0.8rem;
+    }
+
+    .subhead {
+      font-size: 1.4rem;
+      color: #2c3e5c;
+      border-left: 5px solid #2b6eb0;
+      padding-left: 1.6rem;
+      margin: 0.5rem 0 2.5rem 0;
+      font-weight: 350;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: #103a5c;
+      margin: 2.5rem 0 1.2rem 0;
+      border-bottom: 2px solid #cbd6e4;
+      padding-bottom: 0.5rem;
+    }
+
+    h3 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #1d4a70;
+      margin: 2rem 0 1rem 0;
+    }
+
+    p {
+      margin-bottom: 1.2rem;
+      color: #1e2f44;
+    }
+
+    a {
+      color: #1f5f9e;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 1.5rem;
+      padding: 1.8rem 2.2rem;
+      margin: 2rem 0;
+      box-shadow: 0 8px 25px -8px rgba(0, 30, 70, 0.15);
+      border: 1px solid #e1e9f2;
+    }
+
+    .info-box {
+      background: #e6f0fc;
+      border-left: 6px solid #2b6eb0;
+      padding: 1.2rem 2rem;
+      border-radius: 1rem;
+      margin: 1.8rem 0;
+    }
+
+    .warning-box {
+      background: #fff5e6;
+      border-left: 6px solid #d97706;
+      padding: 1.2rem 2rem;
+      border-radius: 1rem;
+      margin: 1.8rem 0;
+    }
+
+    .code-block {
+      background: #0a1a2b;
+      color: #e2eaf2;
+      padding: 1.2rem 1.8rem;
+      border-radius: 1.2rem;
+      overflow-x: auto;
+      font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 1.5rem 0;
+      box-shadow: inset 0 0 0 1px #253f5a;
+    }
+
+    .code-block code {
+      color: #b9d9fc;
+      background: transparent;
+      padding: 0;
+    }
+
+    code {
+      background: #e3eaf1;
+      padding: 0.2rem 0.7rem;
+      border-radius: 0.5rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9em;
+      color: #103a5c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      border-radius: 1.2rem;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 30, 50, 0.08);
+    }
+
+    th {
+      background: #1f3c63;
+      color: white;
+      font-weight: 600;
+      text-align: left;
+      padding: 1rem 1.2rem;
+      font-size: 1rem;
+    }
+
+    td {
+      background: #f9fcff;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid #d4e0ec;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge {
+      background: #d4e2fc;
+      color: #0a314b;
+      padding: 0.2rem 0.8rem;
+      border-radius: 2rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+
+    .command-caption {
+      font-weight: 600;
+      color: #1e4b77;
+      margin-top: 1rem;
+    }
+
+    .question-box {
+      background: #f7faff;
+      border-radius: 1.2rem;
+      padding: 1.5rem 2rem;
+      margin: 2rem 0 1.2rem 0;
+      border: 1px solid #c8d9f0;
+      box-shadow: 0 4px 10px rgba(0,30,70,0.03);
+    }
+
+    details {
+      background: white;
+      padding: 1rem 1.8rem;
+      border-radius: 2rem;
+      margin: 1.2rem 0;
+      border: 1px solid #cbdbe9;
+    }
+
+    summary {
+      font-weight: 600;
+      cursor: pointer;
+      color: #1f4b7a;
+      font-size: 1.2rem;
+    }
+
+    summary::-webkit-details-marker {
+      color: #2b6eb0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .footer-note {
+      margin-top: 3.5rem;
+      text-align: center;
+      color: #4a5d75;
+      font-size: 1rem;
+      border-top: 2px dashed #bacddc;
+      padding-top: 2rem;
+    }
+
+    @media (max-width: 700px) {
+      .container { padding: 2rem 1.2rem; }
+      h1 { font-size: 2.2rem; }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Git revert & reset: undo almost anything</h1>
+  <div class="subhead">A complete, scenario‑based guide to reverting changes in Git</div>
+
+  <!-- INTRODUCTION -->
+  <h2>1. Why reverting matters</h2>
+  <p>Git is a time machine. Mistakes happen: you commit too early, add a bug, or accidentally delete something. Git provides powerful tools to undo changes at every stage – from your working directory to remote branches. This tutorial covers all the methods, their risks, and when to use each.</p>
+
+  <div class="info-box">
+    <strong>Before you start:</strong> Understand the three Git storage areas – working directory, staging area (index), and repository (commits). Reverting means moving content between them or creating new commits that cancel previous ones.
+  </div>
+
+  <!-- 2. REVERTING UNSTAGED CHANGES (working directory) -->
+  <h2>2. Discard changes in working directory (unstaged)</h2>
+  <p>You modified a file but haven't staged it. To throw away those changes and restore the file to the last committed version (or staged version if any):</p>
+  <table>
+    <thead><tr><th>Command</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td><code>git restore &lt;file&gt;</code><br><span class="badge">modern</span></td><td>Discards unstaged changes in the working directory for the given file(s).</td></tr>
+      <tr><td><code>git checkout -- &lt;file&gt;</code><br><span class="badge">classic</span></td><td>Same as above: revert file to staged or HEAD version.</td></tr>
+      <tr><td><code>git restore .</code></td><td>Discard all unstaged changes in the current directory and subdirectories.</td></tr>
+    </tbody>
+  </table>
+  <pre class="code-block"><code># Example: undo changes to index.html
+git restore index.html
+
+# Undo all unstaged modifications
+git restore .</code></pre>
+  <div class="warning-box">
+    <strong>Warning:</strong> This permanently deletes your local edits. They cannot be recovered (unless you have them in another branch or stash).
+  </div>
+
+  <!-- 3. UNSTAGING FILES (remove from staging area) -->
+  <h2>3. Unstage files (from staging area)</h2>
+  <p>You used <code>git add</code> but now want to unstage the file(s) – keep the changes but remove them from the next commit.</p>
+  <table>
+    <thead><tr><th>Command</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td><code>git restore --staged &lt;file&gt;</code></td><td>Unstage the file (remove it from index). Changes remain in working directory.</td></tr>
+      <tr><td><code>git reset &lt;file&gt;</code></td><td>Same as above: unstages the file.</td></tr>
+      <tr><td><code>git reset</code> (no file)</td><td>Unstages all files, but keeps working directory untouched.</td></tr>
+    </tbody>
+  </table>
+  <pre class="code-block"><code># Unstage a single file
+git restore --staged app.js
+
+# Unstage everything
+git reset</code></pre>
+
+  <!-- 4. UNDO COMMITS (LOCAL) – RESET VS REVERT -->
+  <h2>4. Undo commits (local repository)</h2>
+  <p>You have made one or more commits that haven't been pushed yet. You have two main tools: <code>git reset</code> (rewrites history) and <code>git revert</code> (adds a new undoing commit).</p>
+
+  <h3>4.1 git reset – move the branch pointer</h3>
+  <p><code>git reset</code> moves the current branch tip to an earlier commit, optionally modifying the staging area and working directory. Three modes:</p>
+  <table>
+    <thead><tr><th>Mode</th><th>HEAD</th><th>Staging area</th><th>Working directory</th><th>Use case</th></tr></thead>
+    <tbody>
+      <tr><td><code>--soft</code></td><td>moved</td><td>unchanged</td><td>unchanged</td><td>Undo commit but keep changes staged (ready to re‑commit).</td></tr>
+      <tr><td><code>--mixed</code> (default)</td><td>moved</td><td>reset to new HEAD</td><td>unchanged</td><td>Undo commit and unstage changes (keep edits in working dir).</td></tr>
+      <tr><td><code>--hard</code></td><td>moved</td><td>reset to new HEAD</td><td>reset to new HEAD</td><td>Completely discard all changes after that commit.</td></tr>
+    </tbody>
+  </table>
+  <pre class="code-block"><code># Undo the last commit, keep changes staged (soft)
+git reset --soft HEAD~1
+
+# Undo last commit, unstage changes (mixed – default)
+git reset HEAD~1
+
+# Undo last commit AND discard all changes (hard)
+git reset --hard HEAD~1</code></pre>
+  <div class="warning-box">
+    <strong>Danger:</strong> <code>git reset --hard</code> permanently deletes uncommitted changes. Also, never reset commits that have been pushed to a shared branch (rewrites public history).
+  </div>
+
+  <h3>4.2 git revert – safe undo for shared history</h3>
+  <p><code>git revert</code> creates a <em>new commit</em> that inverses the changes of a previous commit. It does not alter existing history, so it's safe for branches that others use.</p>
+  <pre class="code-block"><code># Revert the last commit (creates a new commit)
+git revert HEAD
+
+# Revert a specific commit (use its hash)
+git revert a1b2c3d
+
+# Revert multiple commits (e.g., last 3)
+git revert HEAD~3..HEAD</code></pre>
+  <p>Git will open an editor to write the revert commit message. The working directory and index are updated to reflect the undo.</p>
+
+  <!-- 5. UNDO PUSHED COMMITS (remote) -->
+  <h2>5. Undo commits already pushed to remote</h2>
+  <p>If you've pushed a bad commit, you have two options, but one is safer for collaboration.</p>
+
+  <h3>5.1 Safe: revert on remote</h3>
+  <p>Use <code>git revert</code> locally, then push the new revert commit. This adds a commit that cancels the bad one, and everyone can pull without issues.</p>
+  <pre class="code-block"><code>git revert HEAD      # revert the latest commit
+git push origin main</code></pre>
+
+  <h3>5.2 Risky: reset and force push</h3>
+  <p>If you are absolutely sure no one else has based work on the bad commit (e.g., your private feature branch), you can reset locally and force push.</p>
+  <pre class="code-block"><code>git reset --hard HEAD~1   # remove last commit locally
+git push --force origin branch-name</code></pre>
+  <p><strong>Use with extreme caution.</strong> Force pushing rewrites history and will cause problems for collaborators.</p>
+
+  <!-- 6. REVERTING MERGES -->
+  <h2>6. Special case: reverting a merge commit</h2>
+  <p>Reverting a merge is trickier because the merge commit has two parents. A normal <code>git revert</code> of a merge requires you to specify which parent line to keep (mainline).</p>
+  <pre class="code-block"><code># Revert a merge commit (hash M)
+git revert -m 1 M</code></pre>
+  <p><code>-m 1</code> tells Git to keep the changes from the first parent (the branch you were on when you merged). This reverts the entire merge, but later you may not be able to re‑merge the branch easily. Advanced topic – for most beginners, avoid reverting merges unless necessary, and consult the team.</p>
+
+  <!-- 7. GO BACK TO A SPECIFIC COMMIT (detached HEAD) -->
+  <h2>7. Temporarily go back to an old commit</h2>
+  <p>To inspect or test an older commit without changing branches, you can checkout a commit directly (detached HEAD).</p>
+  <pre class="code-block"><code>git checkout a1b2c3d</code></pre>
+  <p>You are now in 'detached HEAD' state. To start a new branch from this point: <code>git switch -c new-branch</code>. To return to your branch: <code>git switch main</code>.</p>
+
+  <!-- 8. RECOVERING LOST COMMITS (REFLOG) -->
+  <h2>8. Undo a reset – recovering lost commits with reflog</h2>
+  <p>If you accidentally ran <code>git reset --hard</code> and lost commits, Git's reflog records every movement of HEAD. You can find the lost commit and reset back.</p>
+  <pre class="code-block"><code># View the reflog
+git reflog
+
+# Find the commit you want (e.g., HEAD@{2})
+git reset --hard HEAD@{2}</code></pre>
+  <p>Reflog is local and expires after 90 days – a safety net for local mistakes.</p>
+
+  <!-- 9. COMPARISON TABLE: reset vs revert -->
+  <h2>9. Reset vs Revert – quick comparison</h2>
+  <table>
+    <thead><tr><th>Action</th><th>History change</th><th>Safety on shared branches</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td><code>git reset</code></td><td>Rewrites history (removes commits)</td><td>Unsafe – don't use on public branches</td><td>Branch pointer moves backward</td></tr>
+      <tr><td><code>git revert</code></td><td>Adds new commit (history grows)</td><td>Safe – preserves history</td><td>New commit that undoes old one</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 10. PRACTICE QUESTIONS -->
+  <h2>10. Practice exercises</h2>
+
+  <div class="question-box">
+    <h3>Exercise 1</h3>
+    <p>You have unstaged changes in <code>style.css</code> that you want to discard completely. What command do you use?</p>
+    <details>
+      <summary>Show solution</summary>
+      <pre class="code-block"><code>git restore style.css</code></pre>
+      <p>or <code>git checkout -- style.css</code></p>
+    </details>
+  </div>
+
+  <div class="question-box">
+    <h3>Exercise 2</h3>
+    <p>You added <code>debug.log</code> to staging by mistake. You want to unstage it but keep the file as is. What command?</p>
+    <details>
+      <summary>Show solution</summary>
+      <pre class="code-block"><code>git restore --staged debug.log</code></pre>
+      <p>or <code>git reset debug.log</code></p>
+    </details>
+  </div>
+
+  <div class="question-box">
+    <h3>Exercise 3</h3>
+    <p>You just made a commit with message "WIP", but you realize you forgot to include a file. You want to undo the commit, add the file, and re‑commit (keeping the changes staged).</p>
+    <details>
+      <summary>Show solution</summary>
+      <pre class="code-block"><code>git reset --soft HEAD~1
+git add missing-file
+git commit -m "WIP (fixed)"</code></pre>
+    </details>
+  </div>
+
+  <div class="question-box">
+    <h3>Exercise 4</h3>
+    <p>You pushed a buggy commit to the shared <code>main</code> branch. How do you safely undo it?</p>
+    <details>
+      <summary>Show solution</summary>
+      <pre class="code-block"><code>git revert HEAD
+git push origin main</code></pre>
+      <p>This creates a new commit that reverses the bug, and everyone can pull without history conflict.</p>
+    </details>
+  </div>
+
+  <div class="question-box">
+    <h3>Exercise 5</h3>
+    <p>You accidentally ran <code>git reset --hard HEAD~2</code> and lost two commits. How can you recover them?</p>
+    <details>
+      <summary>Show solution</summary>
+      <pre class="code-block"><code>git reflog
+# find the commit hash before the reset
+git reset --hard &lt;hash&gt;</code></pre>
+    </details>
+  </div>
+
+  <div class="question-box">
+    <h3>Exercise 6 (advanced)</h3>
+    <p>You merged a feature branch into main, then discovered a bug. You need to undo the merge on the shared main branch. What command?</p>
+    <details>
+      <summary>Show solution</summary>
+      <pre class="code-block"><code>git revert -m 1 &lt;merge-commit-hash&gt;
+git push origin main</code></pre>
+      <p>This reverts the merge, keeping the first parent (main) as the mainline.</p>
+    </details>
+  </div>
+
+  <!-- 11. CHEATSHEET SUMMARY -->
+  <h2>11. Reverting cheatsheet</h2>
+  <div style="background: #f1f7fd; border-radius: 1.5rem; padding: 1.8rem; margin: 2rem 0;">
+    <pre style="font-family: 'Fira Code', monospace; font-size: 0.95rem; white-space: pre-wrap;"># Working directory (unstaged)
+git restore file
+git checkout -- file
+
+# Staging area (unstage)
+git restore --staged file
+git reset file
+
+# Undo last commit (local, keep changes staged)
+git reset --soft HEAD~1
+
+# Undo last commit (local, unstage changes)
+git reset HEAD~1
+
+# Undo last commit and discard everything
+git reset --hard HEAD~1
+
+# Undo a commit (safe, even if pushed)
+git revert HEAD
+
+# Undo a merge commit
+git revert -m 1 merge_commit_hash
+
+# Recover lost commits
+git reflog
+git reset --hard HEAD@{n}</pre>
+  </div>
+
+  <!-- 12. ADDITIONAL TIPS -->
+  <h2>12. Pro tips</h2>
+  <ul style="margin-left: 2rem;">
+    <li>Always commit your work before trying risky reset operations.</li>
+    <li>Use <code>git status</code> and <code>git log</code> frequently to confirm where you are.</li>
+    <li>Prefer <code>git revert</code> for any commit that has been shared.</li>
+    <li><code>git reflog</code> is your safety net – it records every HEAD change for 90 days.</li>
+    <li>If you need to discard all untracked files, use <code>git clean -fd</code> (careful – it deletes untracked files).</li>
+  </ul>
+
+  <div class="footer-note">
+    Git undo mastery – you now have the tools to confidently fix mistakes at any stage.
+  </div>
+
+</div>
+</body>
+</html>

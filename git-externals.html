@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Internals · .git folder & objects explained</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f4f7fb;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      color: #0b1e33;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0,20,50,0.3);
+      overflow: hidden;
+      padding: 3rem 2.5rem;
+    }
+    h1 {
+      font-size: 2.8rem; font-weight: 700;
+      background: linear-gradient(145deg, #0b2b44, #1f5f9e);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 0.3rem; border-bottom: 3px solid #dde3ed; padding-bottom: 0.8rem;
+    }
+    .subhead {
+      font-size: 1.4rem; color: #2c3e5c;
+      border-left: 5px solid #2b6eb0; padding-left: 1.6rem;
+      margin: 0.5rem 0 2.5rem 0; font-weight: 350;
+    }
+    h2 { font-size: 2.2rem; font-weight: 600; color: #103a5c; margin: 2.5rem 0 1.2rem 0; border-bottom: 2px solid #cbd6e4; padding-bottom: 0.5rem; }
+    h3 { font-size: 1.6rem; font-weight: 600; color: #1d4a70; margin: 2rem 0 1rem 0; }
+    p { margin-bottom: 1.2rem; color: #1e2f44; }
+    a { color: #1f5f9e; text-decoration: none; font-weight: 500; }
+    .info-box {
+      background: #e6f0fc; border-left: 6px solid #2b6eb0;
+      padding: 1.2rem 2rem; border-radius: 1rem; margin: 1.8rem 0;
+    }
+    .code-block {
+      background: #0a1a2b; color: #e2eaf2;
+      padding: 1.2rem 1.8rem; border-radius: 1.2rem;
+      overflow-x: auto; font-family: 'Fira Code', monospace;
+      font-size: 0.95rem; line-height: 1.6; margin: 1.5rem 0;
+      box-shadow: inset 0 0 0 1px #253f5a;
+    }
+    code {
+      background: #e3eaf1; padding: 0.2rem 0.7rem; border-radius: 0.5rem;
+      font-family: 'Fira Code', monospace; font-size: 0.9em; color: #103a5c;
+    }
+    table {
+      width: 100%; border-collapse: collapse; margin: 2rem 0;
+      border-radius: 1.2rem; overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,30,50,0.08);
+    }
+    th { background: #1f3c63; color: white; font-weight: 600; text-align: left; padding: 1rem 1.2rem; }
+    td { background: #f9fcff; padding: 1rem 1.2rem; border-bottom: 1px solid #d4e0ec; }
+    .badge {
+      background: #d4e2fc; color: #0a314b; padding: 0.2rem 0.8rem;
+      border-radius: 2rem; font-size: 0.8rem; font-weight: 600;
+    }
+    .question-box {
+      background: #f7faff; border-radius: 1.2rem; padding: 1.5rem 2rem;
+      margin: 2rem 0 1.2rem 0; border: 1px solid #c8d9f0;
+    }
+    details {
+      background: white; padding: 1rem 1.8rem; border-radius: 2rem;
+      margin: 1.2rem 0; border: 1px solid #cbdbe9;
+    }
+    summary { font-weight: 600; cursor: pointer; color: #1f4b7a; font-size: 1.2rem; }
+    .footer-note {
+      margin-top: 3.5rem; text-align: center; color: #4a5d75;
+      border-top: 2px dashed #bacddc; padding-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Git Internals: under the hood</h1>
+  <div class="subhead">.git folder, objects, trees, commits – how Git really works</div>
+
+  <h2>1. The .git directory structure</h2>
+  <p>When you run <code>git init</code>, Git creates a hidden <code>.git</code> folder. This is the core of your repository.</p>
+  <pre class="code-block"><code>.git/
+├── HEAD                 # pointer to current branch (ref: refs/heads/main)
+├── config               # repo‑specific configuration
+├── description          # used by GitWeb only
+├── hooks/               # client‑ or server‑side scripts
+├── index                # staging area (binary file)
+├── objects/             # all data (blobs, trees, commits)
+│   ├── 01/...           # subfolders named by first two SHA‑1 chars
+│   └── info/ pack/
+├── refs/                # pointers to commits (branches, tags)
+│   ├── heads/           # local branches (e.g., main)
+│   ├── tags/            # tags
+│   └── remotes/         # remote‑tracking branches
+└── logs/                # reflogs (history of where HEAD/branches moved)</code></pre>
+
+  <h2>2. Git object model</h2>
+  <p>Git is fundamentally a content‑addressable filesystem. Every object is identified by a SHA‑1 hash (40 hex characters). There are four types:</p>
+  <table>
+    <thead><tr><th>Object type</th><th>Stores</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><strong>blob</strong></td><td>file content (binary or text) – no metadata</td><td><code>git hash-object -w file.txt</code></td></tr>
+      <tr><td><strong>tree</strong></td><td>directory listing: filenames, modes, and references to blobs/trees</td><td><code>git write-tree</code></td></tr>
+      <tr><td><strong>commit</strong></td><td>metadata: author, committer, message, parent commit(s), and tree hash</td><td><code>git commit-tree</code></td></tr>
+      <tr><td><strong>tag</strong></td><td>annotated tag: object pointing to a commit with a message</td><td><code>git tag -a</code></td></tr>
+    </tbody>
+  </table>
+
+  <h2>3. How a commit is formed</h2>
+  <ol style="margin-left:2rem;">
+    <li><code>git add</code> creates blob objects for each file and updates the index (staging area).</li>
+    <li><code>git commit</code> creates a tree object from the index (snapshot of the project).</li>
+    <li>Then creates a commit object pointing to that tree and the previous commit(s).</li>
+    <li>Finally updates the current branch reference to point to the new commit.</li>
+  </ol>
+  <pre class="code-block"><code># Low‑level commands to see the plumbing
+git cat-file -p HEAD          # show commit content
+git ls-tree HEAD              # show top‑level tree
+git rev-parse HEAD            # show commit hash</code></pre>
+
+  <h2>4. The staging area (index)</h2>
+  <p>The index is a binary file (<code>.git/index</code>) that holds a sorted list of file paths, permissions, and the SHA‑1 of the blob object. It represents what will go into the next commit.</p>
+
+  <h2>5. Refs and HEAD</h2>
+  <p>A ref is a file inside <code>.git/refs</code> containing a commit hash. Branches are refs under <code>refs/heads/</code>. HEAD is usually a symbolic ref pointing to a branch (e.g., <code>ref: refs/heads/main</code>).</p>
+
+  <h2>6. Packfiles and garbage collection</h2>
+  <p>To save space, Git packs multiple objects into a packfile (compressed delta). <code>git gc</code> runs automatically to optimize.</p>
+
+  <h2>7. Practice questions</h2>
+  <div class="question-box">
+    <p><strong>1.</strong> What command would you use to see the type of an object with hash <code>a1b2c3d</code>?</p>
+    <details><summary>Answer</summary><pre class="code-block">git cat-file -t a1b2c3d</pre></details>
+  </div>
+  <div class="question-box">
+    <p><strong>2.</strong> Where does Git store the list of files that are currently staged?</p>
+    <details><summary>Answer</summary>In the index file (<code>.git/index</code>).</details>
+  </div>
+  <div class="question-box">
+    <p><strong>3.</strong> A commit object contains references to what other object(s)?</p>
+    <details><summary>Answer</summary>A tree object (the root directory) and zero or more parent commit objects.</details>
+  </div>
+  <div class="question-box">
+    <p><strong>4.</strong> What is the purpose of the <code>refs/heads/</code> directory?</p>
+    <details><summary>Answer</summary>It holds one file per local branch, containing the commit hash at the tip of that branch.</details>
+  </div>
+
+  <div class="footer-note">You've peeled back the onion – Git's internal model is now yours.</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git commands · workshop reference</title>
+    <!-- fonts & icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            background: #f0f4f8;
+            color: #0f172a;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* header */
+        .cmd-header {
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .cmd-header h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            background: linear-gradient(145deg, #1e293b, #f97316);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cmd-header h1 i {
+            background: none;
+            -webkit-text-fill-color: #f97316;
+            margin-right: 10px;
+        }
+
+        .sub-link {
+            background: white;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 500;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e2e8f0;
+        }
+
+        .sub-link a {
+            text-decoration: none;
+            color: #1e293b;
+        }
+
+        .sub-link i {
+            color: #f97316;
+            margin-right: 5px;
+        }
+
+        /* search */
+        .search-wrapper {
+            background: white;
+            border-radius: 60px;
+            padding: 0.2rem 0.2rem 0.2rem 1.8rem;
+            display: flex;
+            align-items: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s;
+        }
+
+        .search-wrapper:focus-within {
+            border-color: #f97316;
+            box-shadow: 0 8px 25px rgba(249, 115, 22, 0.1);
+        }
+
+        .search-wrapper i {
+            color: #94a3b8;
+            font-size: 1.1rem;
+        }
+
+        #searchInput {
+            flex: 1;
+            border: none;
+            padding: 1rem 0.8rem;
+            font-size: 1rem;
+            font-family: "Inter", sans-serif;
+            background: transparent;
+            outline: none;
+        }
+
+        #searchInput::placeholder {
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        .clear-search {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            margin-right: 5px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clear-search:hover {
+            background: #f97316;
+            color: white;
+        }
+
+        /* results count */
+        .result-count {
+            margin: 1.8rem 0 1rem;
+            font-size: 1rem;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-count span {
+            background: #f97316;
+            color: white;
+            font-weight: 600;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
+
+        /* commands grid */
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .cmd-card {
+            background: white;
+            border-radius: 2rem;
+            padding: 1.5rem 1.3rem 1.3rem 1.3rem;
+            box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #edf2f7;
+            transition: transform 0.15s, border-color 0.15s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cmd-card:hover {
+            transform: translateY(-4px);
+            border-color: #fcd6b0;
+        }
+
+        .command-name {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 1.4rem;
+            font-weight: 600;
+            background: #f1f5f9;
+            display: inline-block;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            margin-bottom: 1rem;
+            color: #c2410c;
+            border: 1px solid #e2e8f0;
+            align-self: flex-start;
+        }
+
+        .command-desc {
+            color: #334155;
+            line-height: 1.5;
+            font-size: 0.98rem;
+            margin-bottom: 1.5rem;
+            flex: 1;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed #d1d9e6;
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+
+        .copy-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 40px;
+            padding: 0.5rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1e293b;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .copy-btn i {
+            color: #f97316;
+            font-size: 1rem;
+        }
+
+        .copy-btn:hover {
+            background: #f97316;
+            border-color: #f97316;
+            color: white;
+        }
+
+        .copy-btn:hover i {
+            color: white;
+        }
+
+        .copy-btn.copied {
+            background: #16a34a;
+            border-color: #16a34a;
+            color: white;
+        }
+
+        .copy-btn.copied i {
+            color: white;
+        }
+
+        .command-example {
+            font-size: 0.85rem;
+            color: #64748b;
+            background: #f8fafc;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid #e9eef3;
+        }
+
+        /* empty state */
+        .no-results {
+            grid-column: 1 / -1;
+            background: #f1f5f9;
+            border-radius: 3rem;
+            padding: 3rem;
+            text-align: center;
+            color: #475569;
+            font-size: 1.2rem;
+        }
+
+        /* footer */
+        footer {
+            margin-top: 4rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 2rem;
+        }
+
+        footer a {
+            color: #f97316;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem;
+            }
+
+            .cmd-header h1 {
+                font-size: 2rem;
+            }
+
+            .commands-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- header with back link -->
+        <div class="cmd-header">
+            <h1><i class="fab fa-git-alt"></i> Git command reference</h1>
+            <div class="sub-link">
+                <a href="./index.html"><i class="fas fa-arrow-left"></i> back to workshop overview</a>
+                <!-- keep as placeholder; you can replace with actual link -->
+            </div>
+        </div>
+
+        <!-- search row -->
+        <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; justify-content: space-between;">
+            <div class="search-wrapper">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search command or description...">
+                <button class="clear-search" id="clearBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="result-count" id="resultCount">showing <span id="countDisplay">36</span> commands</div>
+        </div>
+
+        <!-- commands grid injected here -->
+        <div id="commandsContainer" class="commands-grid"></div>
+
+        <!-- footer note -->
+        <footer>
+            <p>workshop commands — copy & practice. <a href="https://git-scm.com/docs" target="_blank">official git docs
+                    <i class="fas fa-external-link-alt"></i></a></p>
+        </footer>
+    </div>
+
+    <script>
+        (function () {
+            // ---------- COMMANDS DATA (from workshop days + essentials) ----------
+            const commands = [
+                // day 1
+                { cmd: "git config --global user.name \"Your Name\"", desc: "Set your name for commit identity (global)." },
+                { cmd: "git config --global user.email \"you@example.com\"", desc: "Set your email for commit identity (global)." },
+                { cmd: "git init", desc: "Initialize a new Git repository in the current folder." },
+                { cmd: "git status", desc: "Show the state of working directory and staging area." },
+                { cmd: "git add <file>", desc: "Stage a file for commit (use . to add all)." },
+                { cmd: "git commit -m \"message\"", desc: "Commit staged changes with a descriptive message." },
+                { cmd: "git log", desc: "Display the commit history." },
+                { cmd: "git log --oneline", desc: "Compact commit history (each commit as one line)." },
+                { cmd: "git diff", desc: "Show changes between working directory and staging area." },
+                { cmd: "git restore <file>", desc: "Discard changes in working directory (restore to last version)." },
+                { cmd: "git restore --staged <file>", desc: "Unstage a file (keep changes)." },
+                { cmd: "git commit --amend", desc: "Modify the most recent commit (add changes or edit message)." },
+                { cmd: "git rm <file>", desc: "Remove a file and stage the deletion." },
+                { cmd: "git mv <old> <new>", desc: "Rename or move a file and stage it." },
+
+                // day 2
+                { cmd: "git remote", desc: "List remote repositories." },
+                { cmd: "git remote add origin <url>", desc: "Link local repo to a GitHub remote named 'origin'." },
+                { cmd: "git push origin <branch>", desc: "Upload commits to remote repository." },
+                { cmd: "git pull origin <branch>", desc: "Fetch and merge changes from remote to local." },
+                { cmd: "git clone <url>", desc: "Create a local copy of a remote repository." },
+                { cmd: "git branch", desc: "List local branches (current branch highlighted)." },
+                { cmd: "git branch <new-branch>", desc: "Create a new branch." },
+                { cmd: "git checkout <branch>", desc: "Switch to an existing branch." },
+                { cmd: "git switch <branch>", desc: "Alternative to checkout (switch branches)." },
+                { cmd: "git checkout -b <new>", desc: "Create and switch to a new branch." },
+                { cmd: "git switch -c <new>", desc: "Create and switch (modern way)." },
+                { cmd: "git merge <branch>", desc: "Merge another branch into the current branch." },
+
+                // day 3
+                { cmd: "git rebase <branch>", desc: "Reapply commits on top of another base tip (linear history)." },
+                { cmd: "git stash", desc: "Temporarily save uncommitted changes." },
+                { cmd: "git stash pop", desc: "Apply and drop the most recent stash." },
+                { cmd: "git reset <commit>", desc: "Move current branch tip backward (can unstage)." },
+                { cmd: "git revert <commit>", desc: "Create a new commit that undoes a previous commit." },
+                { cmd: "git blame <file>", desc: "Show who last modified each line of a file." },
+                { cmd: "git show <commit>", desc: "Display details of a specific commit." },
+                { cmd: "git fetch", desc: "Download objects and references from remote (without merging)." },
+                { cmd: "git log --graph --oneline", desc: "Visualize branch structure and history." },
+
+                // extras / common utilities
+                { cmd: "git diff --staged", desc: "Show changes staged for commit." },
+                { cmd: "git remote -v", desc: "View remote URLs (fetch/push)." },
+                { cmd: "git branch -d <branch>", desc: "Delete a local branch (if merged)." },
+                { cmd: "git push origin --delete <branch>", desc: "Delete a remote branch." },
+            ];
+
+            // reference to DOM
+            const container = document.getElementById('commandsContainer');
+            const searchInput = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearBtn');
+            const countSpan = document.getElementById('countDisplay');
+
+            // render cards based on filtered array
+            function renderCommands(filterText = '') {
+                const term = filterText.trim().toLowerCase();
+                const filtered = commands.filter(c =>
+                    c.cmd.toLowerCase().includes(term) || c.desc.toLowerCase().includes(term)
+                );
+
+                // update count
+                countSpan.innerText = filtered.length;
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="no-results"><i class="fas fa-search" style="font-size:2rem; opacity:0.5; margin-bottom:1rem; display:block;"></i>No matching commands<br><span style="font-size:0.9rem;">try a different keyword</span></div>`;
+                    return;
+                }
+
+                let html = '';
+                filtered.forEach(item => {
+                    // escape quotes for HTML attributes (but we set text later)
+                    const cmdEscaped = item.cmd.replace(/"/g, '&quot;');
+                    html += `
+          <div class="cmd-card">
+            <div class="command-name">${item.cmd}</div>
+            <div class="command-desc">${item.desc}</div>
+            <div class="card-footer">
+              <span class="command-example"><i class="fas fa-terminal"></i> git</span>
+              <button class="copy-btn" data-cmd="${cmdEscaped}"><i class="fas fa-copy"></i> copy</button>
+            </div>
+          </div>
+        `;
+                });
+                container.innerHTML = html;
+
+                // attach copy event listeners to all copy buttons
+                document.querySelectorAll('.copy-btn').forEach(btn => {
+                    btn.addEventListener('click', function (e) {
+                        const cmdText = this.getAttribute('data-cmd');
+                        // copy to clipboard
+                        navigator.clipboard.writeText(cmdText).then(() => {
+                            // provide visual feedback
+                            const originalHTML = this.innerHTML;
+                            this.innerHTML = '<i class="fas fa-check"></i> copied!';
+                            this.classList.add('copied');
+                            setTimeout(() => {
+                                this.innerHTML = originalHTML;
+                                this.classList.remove('copied');
+                            }, 1500);
+                        }).catch(err => {
+                            alert('Failed to copy command.');
+                        });
+                    });
+                });
+            }
+
+            // initial render
+            renderCommands('');
+
+            // search event
+            searchInput.addEventListener('input', function () {
+                renderCommands(this.value);
+            });
+
+            // clear search
+            clearBtn.addEventListener('click', function () {
+                searchInput.value = '';
+                renderCommands('');
+                searchInput.focus();
+            });
+
+            // optional: filter as you type, already done
+        })();
+    </script>
+
+    <!-- note: the "back to workshop" link is a placeholder — you can replace the href with your main workshop page URL -->
+</body>
+
+</html>

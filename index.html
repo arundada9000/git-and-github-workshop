@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git & GitHub workshop · modern syllabus</title>
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+            padding: 2rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem 2rem;
+        }
+
+        /* typography */
+        h1,
+        h2,
+        h3,
+        h4 {
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #1e293b, #2d3a4f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+
+        .subhead {
+            font-size: 1.2rem;
+            color: #475569;
+            font-weight: 400;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #f97316;
+            padding-left: 1.2rem;
+        }
+
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem;
+            margin: 2rem 0 2.5rem;
+        }
+
+        .link-chip {
+            background: #f1f5f9;
+            padding: 0.6rem 1.4rem;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1e293b;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .link-chip i {
+            color: #f97316;
+            font-size: 1rem;
+        }
+
+        .link-chip:hover {
+            background: #ffffff;
+            border-color: #f97316;
+            box-shadow: 0 6px 14px rgba(249, 115, 22, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* overview card */
+        .overview-card {
+            background: #f0f9ff;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid #e0f2fe;
+        }
+
+        .overview-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .stat-item i {
+            font-size: 2rem;
+            color: #0284c7;
+        }
+
+        .stat-label {
+            font-weight: 300;
+            color: #334155;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        /* day grid */
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 2rem;
+            margin: 2.5rem 0 3rem;
+        }
+
+        .day-card {
+            background: #ffffff;
+            border-radius: 2rem;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+            border: 1px solid #e9eef3;
+            transition: transform 0.2s;
+        }
+
+        .day-card:hover {
+            transform: scale(1.01);
+            border-color: #fcd6b0;
+        }
+
+        .day-badge {
+            display: inline-block;
+            background: #f97316;
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            letter-spacing: 0.3px;
+            margin-bottom: 1.2rem;
+        }
+
+        .session-goal {
+            background: #fff7ed;
+            border-radius: 1rem;
+            padding: 0.8rem 1.2rem;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.95rem;
+            border-left: 4px solid #f97316;
+        }
+
+        .topic-list {
+            list-style: none;
+            margin: 1.2rem 0;
+        }
+
+        .topic-list li {
+            margin-bottom: 0.7rem;
+            font-size: 0.98rem;
+            display: flex;
+            gap: 0.6rem;
+        }
+
+        .topic-list i {
+            color: #f97316;
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+            min-width: 1.2rem;
+        }
+
+        .commands-block {
+            background: #f1f5f9;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .commands-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #475569;
+            margin-bottom: 1rem;
+        }
+
+        .command-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .command-group code {
+            background: #e2e8f0;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #c2410c;
+            font-weight: 500;
+            border: 1px solid #cbd5e1;
+        }
+
+        .ex-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .ex-list li {
+            font-size: 0.95rem;
+            margin-bottom: 0.6rem;
+            display: flex;
+            gap: 0.7rem;
+        }
+
+        .ex-list i {
+            color: #16a34a;
+            font-size: 0.95rem;
+            width: 1.2rem;
+            margin-top: 0.2rem;
+        }
+
+        hr.divider-light {
+            border: none;
+            border-top: 2px dashed #d1d9e6;
+            margin: 2rem 0;
+        }
+
+        /* bottom sections */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            background: #f8fafc;
+            border-radius: 2rem;
+            padding: 2rem;
+            margin: 3rem 0 2rem;
+        }
+
+        .info-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #0f172a;
+        }
+
+        .info-card h3 i {
+            color: #f97316;
+        }
+
+        .info-card ul {
+            list-style: none;
+        }
+
+        .info-card li {
+            margin-bottom: 0.8rem;
+            display: flex;
+            gap: 0.8rem;
+            align-items: baseline;
+        }
+
+        .info-card li i {
+            color: #f97316;
+            font-size: 0.8rem;
+            width: 1.2rem;
+        }
+
+        .tool-badge {
+            background: white;
+            border-radius: 40px;
+            padding: 0.4rem 1.2rem;
+            font-weight: 500;
+            border: 1px solid #e2e8f0;
+            display: inline-block;
+            margin: 0.3rem 0.3rem;
+        }
+
+        footer {
+            margin-top: 3.5rem;
+            text-align: center;
+            border-top: 2px solid #e9eef3;
+            padding-top: 2rem;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        footer a {
+            color: #1e293b;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 0.3rem;
+        }
+
+        footer a:hover {
+            color: #f97316;
+        }
+
+        /* responsive tweaks */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.8rem 1.2rem;
+            }
+
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .overview-stats {
+                gap: 1.5rem;
+            }
+
+            .day-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* extra touch: git + github color */
+        .git-color {
+            color: #f34f29;
+        }
+
+        .github-color {
+            color: #181717;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1>GIT & GITHUB <br>workshop</h1>
+                <div class="subhead">beginner → practical collaboration · 3 days · 12h total</div>
+            </div>
+            <div style="font-size: 3rem; opacity: 0.3;">
+                <i class="fab fa-git-alt git-color"></i> <i class="fab fa-github github-color"></i>
+            </div>
+        </div>
+
+        <!-- resource links (official / download) -->
+        <div class="quick-links">
+            <a href="https://git-scm.com/" target="_blank" class="link-chip"><i class="fas fa-code-branch"></i> Git
+                official</a>
+            <a href="https://github.com/" target="_blank" class="link-chip"><i class="fab fa-github"></i> GitHub</a>
+            <a href="https://git-scm.com/downloads" target="_blank" class="link-chip"><i class="fas fa-download"></i>
+                Download Git</a>
+            <a href="https://docs.github.com/" target="_blank" class="link-chip"><i class="fas fa-book-open"></i> GitHub
+                Docs</a>
+            <a href="https://learngitbranching.js.org/" target="_blank" class="link-chip"><i
+                    class="fas fa-project-diagram"></i> interactive branching</a>
+            <a href="https://gitignore.io/" target="_blank" class="link-chip"><i class="fas fa-file-alt"></i> .gitignore
+                templates</a>
+        </div>
+
+        <!-- overview -->
+        <div class="overview-card">
+            <p style="font-size: 1.15rem; margin-bottom: 1.5rem; max-width: 800px;">📘 <strong>Course overview</strong>
+                — This workshop introduces students to version control using Git and collaborative development using
+                GitHub. By the end, participants will understand how developers track code changes, collaborate with
+                teams, and manage projects using modern industry tools. Designed for absolute beginners.</p>
+            <div class="overview-stats">
+                <div class="stat-item"><i class="fas fa-calendar-alt"></i>
+                    <div><span class="stat-label">duration</span>
+                        <div class="stat-value">3 days · 4h/day</div>
+                    </div>
+                </div>
+                <div class="stat-item"><i class="fas fa-clock"></i>
+                    <div><span class="stat-label">total learning</span>
+                        <div class="stat-value">~12 hours</div>
+                    </div>
+                </div>
+                <div class="stat-item"><i class="fas fa-users"></i>
+                    <div><span class="stat-label">target</span>
+                        <div class="stat-value">absolute beginners</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAY CARDS (1,2,3) -->
+        <div class="day-grid">
+
+            <!-- DAY 1 card -->
+            <div class="day-card">
+                <div class="day-badge">DAY 1 · FUNDAMENTALS</div>
+                <h3 style="font-size: 1.6rem;">Git local</h3>
+                <div class="session-goal"><i class="fas fa-bullseye" style="margin-right: 8px;"></i> Understand version
+                    control & core Git workflow locally.</div>
+
+                <h4 style="margin: 1.2rem 0 0.5rem;">📌 topics</h4>
+                <ul class="topic-list">
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem; align-self: center;"></i> <strong>Intro to
+                            VC</strong> – centralized vs distributed, Git vs GitHub</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Install & config</strong> –
+                        username/email, commit identity</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>First repo</strong> – init,
+                        .git dir, tracking files</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Core workflow</strong> –
+                        working dir, staging, commit</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Commits</strong> – snapshot,
+                        hashes, messages</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Undoing changes</strong> –
+                        restore, unstage, amend</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>.gitignore</strong> – ignore
+                        build files & deps</li>
+                </ul>
+
+                <div class="commands-block">
+                    <div class="commands-title"><i class="fas fa-terminal"></i> commands covered</div>
+                    <div class="command-group">
+                        <code>git init</code> <code>git status</code> <code>git add</code> <code>git commit</code>
+                        <code>git log</code> <code>git log --oneline</code> <code>git diff</code>
+                        <code>git restore</code> <code>git restore --staged</code> <code>git commit --amend</code>
+                    </div>
+                    <p style="margin-top: 0.7rem; color: #334155;"><i class="fas fa-info-circle"
+                            style="color:#f97316;"></i> also: git config (global user.name/email) – essential but not
+                        listed</p>
+                </div>
+
+                <h4><i class="fas fa-flask" style="color:#16a34a;"></i> exercises</h4>
+                <ul class="ex-list">
+                    <li><i class="fas fa-check-circle"></i> Create a repository</li>
+                    <li><i class="fas fa-check-circle"></i> Track files and commit changes</li>
+                    <li><i class="fas fa-check-circle"></i> Modify files & observe Git history</li>
+                    <li><i class="fas fa-check-circle"></i> Undo mistakes safely</li>
+                </ul>
+            </div>
+
+            <!-- DAY 2 card -->
+            <div class="day-card">
+                <div class="day-badge">DAY 2 · COLLABORATION</div>
+                <h3 style="font-size: 1.6rem;">GitHub & teams</h3>
+                <div class="session-goal"><i class="fas fa-bullseye" style="margin-right: 8px;"></i> Connect Git to
+                    GitHub and collaborate on shared repos.</div>
+
+                <h4 style="margin: 1.2rem 0 0.5rem;">📌 topics</h4>
+                <ul class="topic-list">
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Intro GitHub</strong> – remote
+                        repos, public/private, structure</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Connect local to
+                            remote</strong> – remote add, push, pull</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Cloning</strong> – git clone
+                    </li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Branching</strong> – feature
+                        branches, branch, checkout, switch</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Merging</strong> –
+                        fast-forward, merge commits</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Merge conflicts</strong> – why
+                        & how to resolve</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Pull requests</strong> – code
+                        review, merging PRs</li>
+                </ul>
+
+                <div class="commands-block">
+                    <div class="commands-title"><i class="fas fa-terminal"></i> commands covered</div>
+                    <div class="command-group">
+                        <code>git remote</code> <code>git remote add origin</code> <code>git push</code>
+                        <code>git pull</code>
+                        <code>git clone</code> <code>git branch</code> <code>git checkout</code> <code>git switch</code>
+                        <code>git checkout -b</code> <code>git merge</code>
+                    </div>
+                </div>
+
+                <h4><i class="fas fa-flask" style="color:#16a34a;"></i> exercises</h4>
+                <ul class="ex-list">
+                    <li><i class="fas fa-check-circle"></i> Create branches</li>
+                    <li><i class="fas fa-check-circle"></i> Push branches to GitHub</li>
+                    <li><i class="fas fa-check-circle"></i> Create pull requests</li>
+                    <li><i class="fas fa-check-circle"></i> Resolve merge conflicts</li>
+                </ul>
+            </div>
+
+            <!-- DAY 3 card -->
+            <div class="day-card">
+                <div class="day-badge">DAY 3 · PRO WORKFLOWS</div>
+                <h3 style="font-size: 1.6rem;">advanced & open source</h3>
+                <div class="session-goal"><i class="fas fa-bullseye" style="margin-right: 8px;"></i> Real‑world dev
+                    workflows, rebasing, stashing, contribution simulation.</div>
+
+                <h4 style="margin: 1.2rem 0 0.5rem;">📌 topics</h4>
+                <ul class="topic-list">
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Dev workflows</strong> –
+                        feature branch, GitHub Flow</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Rebasing vs merging</strong> –
+                        linear history</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Stashing</strong> – git stash
+                        / pop</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Advanced history</strong> –
+                        reset, revert, blame, show</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Open source sim</strong> –
+                        fork, clone, branch, PR</li>
+                    <li><i class="fas fa-circle" style="font-size: 0.45rem;"></i> <strong>Best practices</strong> –
+                        commit messages, secrets, structure</li>
+                </ul>
+
+                <div class="commands-block">
+                    <div class="commands-title"><i class="fas fa-terminal"></i> commands covered</div>
+                    <div class="command-group">
+                        <code>git rebase</code> <code>git stash</code> <code>git stash pop</code> <code>git reset</code>
+                        <code>git revert</code> <code>git blame</code> <code>git show</code>
+                    </div>
+                </div>
+
+                <h4><i class="fas fa-flask" style="color:#16a34a;"></i> simulation + exercises</h4>
+                <ul class="ex-list">
+                    <li><i class="fas fa-check-circle"></i> Fork & clone a repo</li>
+                    <li><i class="fas fa-check-circle"></i> Create feature branch & commit</li>
+                    <li><i class="fas fa-check-circle"></i> Open a pull request</li>
+                    <li><i class="fas fa-check-circle"></i> Practice rebase interactively</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- final group project (after day 3) -->
+        <div
+            style="background: linear-gradient(145deg, #fef9e7, #fff7e0); border-radius: 2rem; padding: 2rem; margin: 1rem 0 2rem;">
+            <h3 style="display: flex; align-items: center; gap: 10px; font-size: 1.8rem; margin-bottom: 1.5rem;"><i
+                    class="fas fa-users-cog" style="color:#b45309;"></i> final project – collaboration simulation</h3>
+            <p><strong>groups will:</strong></p>
+            <ul class="ex-list" style="margin-top: 0.5rem;">
+                <li><i class="fas fa-check-circle" style="color:#b45309;"></i> Create a repository</li>
+                <li><i class="fas fa-check-circle" style="color:#b45309;"></i> Use branches for features</li>
+                <li><i class="fas fa-check-circle" style="color:#b45309;"></i> Collaborate through pull requests</li>
+                <li><i class="fas fa-check-circle" style="color:#b45309;"></i> Resolve conflicts</li>
+                <li><i class="fas fa-check-circle" style="color:#b45309;"></i> Merge completed features</li>
+            </ul>
+            <p style="margin-top: 1rem;">🔄 <em>real PR flow · code review · merging</em></p>
+        </div>
+
+        <!-- learning outcomes + audience + tools -->
+        <div class="info-grid">
+            <div class="info-card">
+                <h3><i class="fas fa-graduation-cap"></i> learning outcomes</h3>
+                <ul>
+                    <li><i class="fas fa-check"></i> Understand version control concepts</li>
+                    <li><i class="fas fa-check"></i> Use Git for tracking history</li>
+                    <li><i class="fas fa-check"></i> Create & manage repositories</li>
+                    <li><i class="fas fa-check"></i> Work with branches and merges</li>
+                    <li><i class="fas fa-check"></i> Collaborate using GitHub</li>
+                    <li><i class="fas fa-check"></i> Resolve merge conflicts</li>
+                    <li><i class="fas fa-check"></i> Contribute to team projects</li>
+                </ul>
+            </div>
+            <div class="info-card">
+                <h3><i class="fas fa-user-friends"></i> target audience</h3>
+                <ul>
+                    <li><i class="fas fa-angle-right"></i> Beginner programmers</li>
+                    <li><i class="fas fa-angle-right"></i> Students new to version control</li>
+                    <li><i class="fas fa-angle-right"></i> Anyone interested in collaborative software dev</li>
+                </ul>
+                <h3 style="margin-top: 2rem;"><i class="fas fa-tools"></i> tools used</h3>
+                <div style="margin-top: 0.5rem;">
+                    <span class="tool-badge"><i class="fab fa-git-alt"></i> Git</span>
+                    <span class="tool-badge"><i class="fab fa-github"></i> GitHub</span>
+                    <span class="tool-badge"><i class="fas fa-terminal"></i> CLI</span>
+                </div>
+            </div>
+            <div class="info-card">
+                <h3><i class="fas fa-lightbulb"></i> best practices</h3>
+                <ul>
+                    <li><i class="fas fa-pen"></i> Clear commit messages</li>
+                    <li><i class="fas fa-pen"></i> Structure commits properly</li>
+                    <li><i class="fas fa-pen"></i> Avoid committing secrets</li>
+                    <li><i class="fas fa-pen"></i> Manage repos effectively</li>
+                </ul>
+                <p style="margin-top: 2rem;"><i class="fas fa-link"></i> more resources:<br>
+                    <a href="https://git-scm.com/doc" target="_blank">git docs</a> ·
+                    <a href="https://github.com/features/actions" target="_blank">GH actions</a> ·
+                    <a href="https://training.github.org/" target="_blank">GitHub skills</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- footer with official links again -->
+        <footer>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem; margin-bottom: 1.5rem;">
+                <a href="https://git-scm.com/" target="_blank"><i class="fab fa-git-alt"></i> Git</a>
+                <a href="https://github.com/" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://git-scm.com/downloads" target="_blank"><i class="fas fa-download"></i> download</a>
+                <a href="https://docs.github.com/en/get-started" target="_blank"><i class="fas fa-question-circle"></i>
+                    GitHub Guides</a>
+                <a href="https://www.atlassian.com/git/tutorials" target="_blank"><i class="fas fa-sitemap"></i> Git
+                    tutorials</a>
+            </div>
+            <p style="font-size: 0.9rem;">© workshop syllabus — designed for modern, hands‑on learning.<br>All official
+                links open in new tab.</p>
+        </footer>
+    </div>
+    <!-- (optional) smooth hover only, no extra JS needed -->
+</body>
+
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Git Branches · full tutorial for developers</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f4f7fb;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      color: #0b1e33;
+      padding: 2rem 1rem;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 25px 50px -12px rgba(0,20,50,0.3);
+      overflow: hidden;
+      padding: 3rem 2.5rem;
+    }
+    h1 {
+      font-size: 2.8rem; font-weight: 700;
+      background: linear-gradient(145deg, #0b2b44, #1f5f9e);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 0.3rem; border-bottom: 3px solid #dde3ed; padding-bottom: 0.8rem;
+    }
+    .subhead {
+      font-size: 1.4rem; color: #2c3e5c;
+      border-left: 5px solid #2b6eb0; padding-left: 1.6rem;
+      margin: 0.5rem 0 2.5rem 0; font-weight: 350;
+    }
+    h2 { font-size: 2.2rem; font-weight: 600; color: #103a5c; margin: 2.5rem 0 1.2rem 0; border-bottom: 2px solid #cbd6e4; padding-bottom: 0.5rem; }
+    h3 { font-size: 1.6rem; font-weight: 600; color: #1d4a70; margin: 2rem 0 1rem 0; }
+    p { margin-bottom: 1.2rem; color: #1e2f44; }
+    a { color: #1f5f9e; text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+    .info-box {
+      background: #e6f0fc; border-left: 6px solid #2b6eb0;
+      padding: 1.2rem 2rem; border-radius: 1rem; margin: 1.8rem 0;
+    }
+    .warning-box {
+      background: #fff5e6; border-left: 6px solid #d97706;
+      padding: 1.2rem 2rem; border-radius: 1rem; margin: 1.8rem 0;
+    }
+    .code-block {
+      background: #0a1a2b; color: #e2eaf2;
+      padding: 1.2rem 1.8rem; border-radius: 1.2rem;
+      overflow-x: auto; font-family: 'Fira Code', monospace;
+      font-size: 0.95rem; line-height: 1.6; margin: 1.5rem 0;
+      box-shadow: inset 0 0 0 1px #253f5a;
+    }
+    code {
+      background: #e3eaf1; padding: 0.2rem 0.7rem; border-radius: 0.5rem;
+      font-family: 'Fira Code', monospace; font-size: 0.9em; color: #103a5c;
+    }
+    table {
+      width: 100%; border-collapse: collapse; margin: 2rem 0;
+      border-radius: 1.2rem; overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,30,50,0.08);
+    }
+    th { background: #1f3c63; color: white; font-weight: 600; text-align: left; padding: 1rem 1.2rem; }
+    td { background: #f9fcff; padding: 1rem 1.2rem; border-bottom: 1px solid #d4e0ec; }
+    .badge {
+      background: #d4e2fc; color: #0a314b; padding: 0.2rem 0.8rem;
+      border-radius: 2rem; font-size: 0.8rem; font-weight: 600;
+      display: inline-block; margin-right: 0.5rem;
+    }
+    .question-box {
+      background: #f7faff; border-radius: 1.2rem; padding: 1.5rem 2rem;
+      margin: 2rem 0 1.2rem 0; border: 1px solid #c8d9f0;
+    }
+    details {
+      background: white; padding: 1rem 1.8rem; border-radius: 2rem;
+      margin: 1.2rem 0; border: 1px solid #cbdbe9;
+    }
+    summary { font-weight: 600; cursor: pointer; color: #1f4b7a; font-size: 1.2rem; }
+    .footer-note {
+      margin-top: 3.5rem; text-align: center; color: #4a5d75;
+      border-top: 2px dashed #bacddc; padding-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Git branches: master the branching</h1>
+  <div class="subhead">From basics to merge conflicts and workflows</div>
+
+  <h2>1. What is a branch?</h2>
+  <p>A branch in Git is a lightweight movable pointer to a commit. The default branch is usually called <code>main</code> (or <code>master</code>). Branches allow you to develop features, fix bugs, or experiment in isolation without affecting the main codebase.</p>
+
+  <h2>2. Basic branch operations</h2>
+  <table>
+    <thead><tr><th>Command</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>git branch</code></td><td>List local branches (* marks current)</td></tr>
+      <tr><td><code>git branch &lt;name&gt;</code></td><td>Create a new branch (stays on current branch)</td></tr>
+      <tr><td><code>git switch &lt;branch&gt;</code> or <code>git checkout &lt;branch&gt;</code></td><td>Switch to another branch</td></tr>
+      <tr><td><code>git switch -c &lt;branch&gt;</code></td><td>Create and switch to new branch</td></tr>
+      <tr><td><code>git merge &lt;branch&gt;</code></td><td>Merge &lt;branch&gt; into current branch</td></tr>
+      <tr><td><code>git branch -d &lt;branch&gt;</code></td><td>Delete a branch (safe: only if merged)</td></tr>
+      <tr><td><code>git branch -D &lt;branch&gt;</code></td><td>Force delete a branch</td></tr>
+    </tbody>
+  </table>
+  <pre class="code-block"><code># Example workflow
+git switch -c feature/login     # create & switch
+# ... work, commit
+git switch main
+git merge feature/login          # merge into main
+git branch -d feature/login      # delete</code></pre>
+
+  <h2>3. Understanding HEAD and branches</h2>
+  <p>HEAD is a reference to the current branch (or commit). When you switch branches, Git updates HEAD and changes the working directory to match that branch's tip.</p>
+
+  <h2>4. Merge conflicts</h2>
+  <p>When two branches modify the same part of a file, Git cannot automatically merge. You must resolve the conflict manually.</p>
+  <ol style="margin-left:2rem;">
+    <li>Git marks conflicted files; edit them to keep the desired changes.</li>
+    <li>Remove conflict markers (<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>).</li>
+    <li>Stage the resolved files: <code>git add &lt;file&gt;</code>.</li>
+    <li>Complete the merge: <code>git commit</code> (Git will generate a merge commit message).</li>
+  </ol>
+  <div class="info-box">Use <code>git status</code> during conflict to see which files need resolution.</div>
+
+  <h2>5. Remote branches</h2>
+  <p>Remote branches are references to the state of branches in remote repositories (e.g., <code>origin/main</code>).</p>
+  <pre class="code-block"><code>git push origin feature      # push local branch to remote
+git fetch origin             # update remote-tracking branches
+git pull origin main         = git fetch + git merge
+git branch -r                # list remote branches
+git checkout -b local-name origin/remote-name  # track remote branch</code></pre>
+
+  <h2>6. Branching strategies (workflows)</h2>
+  <ul>
+    <li><strong>Git Flow</strong>: <code>main</code>, <code>develop</code>, feature branches, release branches, hotfixes.</li>
+    <li><strong>GitHub Flow</strong>: <code>main</code>, feature branches, pull requests. Simple and popular.</li>
+    <li><strong>Trunk‑based</strong>: short‑lived branches, frequent merges to main.</li>
+  </ul>
+
+  <h2>7. Practice exercises</h2>
+  <div class="question-box">
+    <p><strong>1.</strong> Create a new branch called <code>bugfix</code> and switch to it. What command?</p>
+    <details><summary>Answer</summary><pre class="code-block">git switch -c bugfix</pre></details>
+  </div>
+  <div class="question-box">
+    <p><strong>2.</strong> You are on <code>main</code> and want to merge <code>feature</code> into it. What commands?</p>
+    <details><summary>Answer</summary><pre class="code-block">git merge feature</pre></details>
+  </div>
+  <div class="question-box">
+    <p><strong>3.</strong> How do you delete a local branch named <code>old-feature</code> after it has been merged?</p>
+    <details><summary>Answer</summary><pre class="code-block">git branch -d old-feature</pre></details>
+  </div>
+  <div class="question-box">
+    <p><strong>4.</strong> After pushing your branch to remote, a colleague asks you to pull their changes. How do you update your local branch with the remote version?</p>
+    <details><summary>Answer</summary><pre class="code-block">git pull origin your-branch</pre></details>
+  </div>
+
+  <div class="footer-note">Branch with confidence – you now know the core of Git branching.</div>
+</div>
+</body>
+</html>
