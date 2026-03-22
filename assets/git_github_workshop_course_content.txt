@@ -1,0 +1,221 @@
+GIT & GITHUB WORKSHOP Beginner to Practical Collaboration
+
+Total Duration: 3 Days Daily Duration: 4 Hours Total Learning Time: ~12
+Hours
+
+Course Overview This workshop introduces students to version control
+using Git and collaborative development using GitHub. By the end of the
+course, participants will understand how developers track code changes,
+collaborate with teams, and manage software projects using modern
+industry tools.
+
+The course is designed for absolute beginners with little or no prior
+experience with Git.
+
+------------------------------------------------------------------------
+
+DAY 1 – GIT FUNDAMENTALS (LOCAL VERSION CONTROL)
+
+Session Goals Understand the purpose of version control and learn the
+core Git workflow locally.
+
+Topics Covered
+
+1.  Introduction to Version Control
+
+-   What is version control
+-   Problems solved by version control systems
+-   Centralized vs Distributed Version Control Systems
+-   Overview of Git and its history
+-   Git vs GitHub
+
+2.  Installing and Configuring Git
+
+-   Checking Git installation
+-   Configuring username and email
+-   Understanding commit identity
+
+3.  Creating Your First Git Repository
+
+-   Initializing a repository
+-   Understanding the .git directory
+-   Tracking files
+
+4.  Core Git Workflow
+
+-   Working Directory
+-   Staging Area
+-   Repository (Commit history)
+
+Commands Covered - git init - git status - git add - git commit
+
+5.  Understanding Commits
+
+-   Snapshot concept
+-   Commit hashes
+-   Writing meaningful commit messages
+
+Commands Covered - git log - git log –oneline - git diff
+
+6.  Undoing Changes
+
+-   Restoring modified files
+-   Unstaging files
+-   Amending commits
+
+Commands Covered - git restore - git restore –staged - git commit –amend
+
+7.  Ignoring Files
+
+-   Purpose of .gitignore
+-   Ignoring build files and dependencies
+
+Practical Exercises - Create a repository - Track files and commit
+changes - Modify files and observe Git history - Undo mistakes safely
+
+------------------------------------------------------------------------
+
+DAY 2 – GITHUB & COLLABORATION
+
+Session Goals Learn how Git connects to GitHub and how developers
+collaborate on shared repositories.
+
+Topics Covered
+
+1.  Introduction to GitHub
+
+-   What is GitHub
+-   Remote repositories
+-   Public vs private repositories
+-   Repository structure
+
+2.  Connecting Local Git to GitHub
+
+-   Creating repositories on GitHub
+-   Linking local repository with remote repository
+
+Commands Covered - git remote - git remote add origin - git push - git
+pull
+
+3.  Cloning Repositories
+
+-   Downloading existing projects
+-   Understanding remote repositories
+
+Command Covered - git clone
+
+4.  Branching Concepts
+
+-   Why branches exist
+-   Feature branch workflow
+-   Working with multiple versions of code
+
+Commands Covered - git branch - git checkout - git switch - git checkout
+-b
+
+5.  Merging Branches
+
+-   Combining changes from branches
+-   Fast-forward merges
+-   Merge commits
+
+Command Covered - git merge
+
+6.  Merge Conflicts
+
+-   Why conflicts happen
+-   Resolving conflicts manually
+
+7.  Pull Requests
+
+-   Creating pull requests
+-   Code review workflow
+-   Merging pull requests
+
+Practical Exercises - Create branches - Push branches to GitHub - Create
+pull requests - Resolve merge conflicts
+
+------------------------------------------------------------------------
+
+DAY 3 – PRACTICAL WORKFLOWS & ADVANCED CONCEPTS
+
+Session Goals Understand real-world development workflows and advanced
+Git features used by professional developers.
+
+Topics Covered
+
+1.  Real Developer Workflows
+
+-   Feature branch workflow
+-   GitHub Flow
+-   Collaboration strategies
+
+2.  Rebasing vs Merging
+
+-   Linear history
+-   Understanding when to use rebase
+
+Command Covered - git rebase
+
+3.  Saving Work Temporarily
+
+-   Managing unfinished work
+
+Commands Covered - git stash - git stash pop
+
+4.  Advanced History Tools
+
+Commands Covered - git reset - git revert - git blame - git show
+
+5.  Open Source Contribution Simulation Students will practice a real
+    collaboration scenario:
+
+-   Forking repositories
+-   Cloning forks
+-   Creating feature branches
+-   Submitting pull requests
+
+6.  Git Best Practices
+
+-   Writing clear commit messages
+-   Structuring commits properly
+-   Avoiding committing sensitive information
+-   Managing project repositories effectively
+
+Final Project Exercise Students will work in groups to:
+
+-   Create a repository
+-   Use branches for features
+-   Collaborate through pull requests
+-   Resolve conflicts
+-   Merge completed features
+
+------------------------------------------------------------------------
+
+Learning Outcomes
+
+By the end of the workshop students will be able to:
+
+-   Understand version control concepts
+-   Use Git for tracking project history
+-   Create and manage repositories
+-   Work with branches and merges
+-   Collaborate using GitHub
+-   Resolve merge conflicts
+-   Contribute to team-based software projects
+
+------------------------------------------------------------------------
+
+Target Audience
+
+-   Beginner programmers
+-   Students new to version control
+-   Anyone interested in collaborative software development
+
+------------------------------------------------------------------------
+
+Tools Used
+
+-   Git
+-   GitHub
+-   Command Line Interface
